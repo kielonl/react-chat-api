@@ -1,8 +1,7 @@
-const path = require("path");
 const userAgent = require("user-agent-parse");
-const fs = require("fs");
-const async = require("hbs/lib/async");
 const axios = require("axios");
+const crypto = require("crypto");
+const supertest = require("supertest");
 const users = [];
 
 const hasWhiteSpaces = (string) => {
@@ -11,11 +10,17 @@ const hasWhiteSpaces = (string) => {
 
 const validation = (string) => {
   if (hasWhiteSpaces(string)) {
-    return "has white spaces";
+    return {
+      errorMessage: "has white spaces",
+    };
   } else if (string.length >= 16 || string.length < 3) {
-    return "username length must be between 3 and 16 characters";
+    return {
+      errorMessage: "username length must be between 3 and 16 characters",
+    };
   } else if (!isNaN(string)) {
-    return "username cannot be a number";
+    return {
+      errorMessage: "username cannot be a number",
+    };
   } else {
     return true;
   }
@@ -56,6 +61,7 @@ module.exports = function (app) {
         if (isImage(request.body.imageUrl) && img) {
           const browserDetails = userAgent.parse(request.get("User-Agent"));
           const newUser = {
+            UID: crypto.randomUUID(),
             username: request.body.username,
             dataTime: new Date().toString(),
             browser: browserDetails,
@@ -78,6 +84,10 @@ module.exports = function (app) {
   });
 
   app.get("/users", (request, response) => {
-    response.send(`<img src=${users[0].image} alt="dziadek"/>`);
+    response.send(users);
+  });
+  app.get("/users/:id", (request, response) => {
+    const result = users.find((x) => x.UID == request.params.id);
+    response.send(result);
   });
 };
