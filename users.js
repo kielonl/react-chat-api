@@ -1,7 +1,6 @@
 const userAgent = require("user-agent-parse");
 const axios = require("axios");
 const crypto = require("crypto");
-const supertest = require("supertest");
 const users = [];
 
 const hasWhiteSpaces = (string) => {
@@ -61,13 +60,14 @@ module.exports = function (app) {
         if (isImage(request.body.imageUrl) && img) {
           const browserDetails = userAgent.parse(request.get("User-Agent"));
           const newUser = {
-            UID: crypto.randomUUID(),
+            UUID: crypto.randomUUID(),
             username: request.body.username,
             dataTime: new Date().toString(),
             browser: browserDetails,
             image: request.body.imageUrl,
           };
           users.push(newUser);
+          response.status(201);
           response.send(users);
         } else {
           response.status(400);
@@ -87,7 +87,12 @@ module.exports = function (app) {
     response.send(users);
   });
   app.get("/users/:id", (request, response) => {
-    const result = users.find((x) => x.UID == request.params.id);
-    response.send(result);
+    const result = users.find((x) => x.UUID == request.params.id);
+    if (result) {
+      response.status(201);
+      response.json(result);
+    } else {
+      response.status(401).json({ errorMessage: "User UID not found" });
+    }
   });
 };
