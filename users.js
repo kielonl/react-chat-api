@@ -71,11 +71,11 @@ module.exports = function (app) {
           response.send(users);
         } else {
           response.status(400);
-          response.send("invalid image url");
+          response.send({ errorMessage: "invalid image url" });
         }
       } else {
         response.status(400);
-        response.send("username taken");
+        response.send({ errorMessage: "username taken" });
       }
     } else {
       response.status(400);
@@ -92,8 +92,7 @@ module.exports = function (app) {
       response.status(201);
       response.json(result);
     } else {
-      response.status(401).json({ errorMessage: "User UID not found" });
+      response.status(401).json({ errorMessage: "User UUID not found" });
     }
   });
 };
-module.exports.users = users;

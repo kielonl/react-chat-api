@@ -18,11 +18,8 @@
   },
   "homepage": "https://gitlab.com/el-praktykanto/chat-backend#readme",
   "dependencies": {
-    "async": "^3.2.4",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "supertest": "^6.2.4",
     "user-agent-parse": "^0.1.12"
   }
 }
