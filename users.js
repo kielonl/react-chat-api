@@ -60,7 +60,7 @@ module.exports = function (app) {
         if (isImage(request.body.imageUrl) && img) {
           const browserDetails = userAgent.parse(request.get("User-Agent"));
           const newUser = {
-            UUID: crypto.randomUUID(),
+            uuid: crypto.randomUUID(),
             username: request.body.username,
             dataTime: new Date().toString(),
             browser: browserDetails,
@@ -87,7 +87,7 @@ module.exports = function (app) {
     response.send(users);
   });
   app.get("/users/:id", (request, response) => {
-    const result = users.find((x) => x.UUID == request.params.id);
+    const result = users.find((x) => x.uuid == request.params.id);
     if (result) {
       response.status(201);
       response.json(result);
@@ -96,3 +96,4 @@ module.exports = function (app) {
     }
   });
 };
+module.exports.users = users;
