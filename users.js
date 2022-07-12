@@ -1,9 +1,7 @@
-const path = require("path");
 const userAgent = require("user-agent-parse");
-const fs = require("fs");
-const async = require("hbs/lib/async");
 const axios = require("axios");
 const users = [];
+let currentUser;
 
 const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
@@ -63,6 +61,7 @@ module.exports = function (app) {
           };
           users.push(newUser);
           response.send(users);
+          currentUser = newUser;
         } else {
           response.status(400);
           response.send("invalid image url");
@@ -81,3 +80,5 @@ module.exports = function (app) {
     response.send(`<img src=${users[0].image} alt="dziadek"/>`);
   });
 };
+
+module.exports.users = users;

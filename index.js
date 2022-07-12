@@ -12,6 +12,7 @@ app.use(
 );
 
 require("./users")(app);
+require("./channels")(app);
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Example app listening on port ${port}`);
