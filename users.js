@@ -7,23 +7,15 @@ let currentUser;
 const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
-
-const validation = (string) => {
-  if (hasWhiteSpaces(string)) {
-    return {
-      errorMessage: "has white spaces",
-    };
-  } else if (string.length >= 16 || string.length < 3) {
-    return {
-      errorMessage: "username length must be between 3 and 16 characters",
-    };
-  } else if (!isNaN(string)) {
-    return {
-      errorMessage: "username cannot be a number",
-    };
+const isLenghtOk = (string) => {
+  if (string.length >= 16 || string.length < 3) {
+    return false;
   } else {
     return true;
   }
+};
+const isNotANumber = (string) => {
+  return !isNaN(string);
 };
 
 function isImage(url) {
@@ -55,39 +47,43 @@ module.exports = function (app) {
     const img = await checkUrl(request.body.imageUrl).then((result) => {
       return result;
     });
-    if (validation(request.body.username) == true) {
-      const found = users.some((el) => el.username == request.body.username);
-      if (!found) {
-        if (isImage(request.body.imageUrl) && img) {
-          const browserDetails = userAgent.parse(request.get("User-Agent"));
-          const browser = browserDetails.full.split("/");
-          const newUser = {
-            uuid: crypto.randomUUID(),
-            username: request.body.username,
-            dataTime: new Date().toString(),
-            image: request.body.imageUrl,
-            browser: {
-              browserName: browser[0],
-              browserVersion: browser[1],
-              osVersion: browserDetails.os,
-            },
-          };
-          users.push(newUser);
-          response.status(201);
-          response.send(users);
-          currentUser = newUser;
-        } else {
-          response.status(400);
-          response.send({ errorMessage: "invalid image url" });
-        }
-      } else {
-        response.status(400);
-        response.send({ errorMessage: "username taken" });
-      }
-    } else {
-      response.status(400);
-      response.send(validation(request.body.username));
+    if (hasWhiteSpaces(request.body.username)) {
+      return response.status(400).json({ errorMessage: "has white spaces" });
     }
+    if (!isLenghtOk(request.body.username)) {
+      return response.status(400).json({
+        errorMessage: "username length must be between 3 and 16 characters",
+      });
+    }
+    if (isNotANumber(request.body.username)) {
+      return response
+        .status(400)
+        .json({ errorMessage: "username can't be an integer" });
+    }
+    const found = users.some((el) => el.username == request.body.username);
+    if (found) {
+      return response.status(400).json({ errorMessage: "username taken" });
+    }
+    if (!isImage(request.body.imageUrl) || !img) {
+      return response.status(401).json({ errorMessage: "invalid image url" });
+    }
+    const browserDetails = userAgent.parse(request.get("User-Agent"));
+    const browser = browserDetails.full.split("/");
+    const newUser = {
+      uuid: crypto.randomUUID(),
+      username: request.body.username,
+      dataTime: new Date().toString(),
+      image: request.body.imageUrl,
+      browser: {
+        browserName: browser[0],
+        browserVersion: browser[1],
+        osVersion: browserDetails.os,
+      },
+    };
+    users.push(newUser);
+    response.status(201);
+    response.send(users);
+    currentUser = newUser;
   });
 
   app.get("/users", (request, response) => {

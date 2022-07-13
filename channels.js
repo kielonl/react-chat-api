@@ -20,7 +20,7 @@ module.exports = function (app) {
         });
       } else {
         const channelOwner = {
-          owner: request.body.username,
+          owner: request.body.uuid,
           channelUuid: crypto.randomUUID(),
           dataTime: new Date().toString(),
           maxNumberOfMembers: request.body.maxUsers,
