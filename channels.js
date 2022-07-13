@@ -4,8 +4,7 @@ let channels = [];
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
-    const found = users.some((el) => el.username == request.body.username);
-    if (!found) {
+    if (!users.some((el) => el.username == request.body.username)) {
       response
         .status(401)
         .json({ errorMessage: "There's no user with this username" });
@@ -33,5 +32,14 @@ module.exports = function (app) {
   });
   app.get("/users", (request, response) => {
     response.send(channels);
+  });
+  app.get("/channels/:cuuid", (request, response) => {
+    const result = channels.find((x) => x.channelUuid == request.params.cuuid);
+    console.log(result);
+    if (result) {
+      response.status(200).json(result);
+    } else {
+      response.status(401).json({ errorMessage: "Channel UUID not found" });
+    }
   });
 };

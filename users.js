@@ -1,6 +1,7 @@
 const userAgent = require("user-agent-parse");
 const axios = require("axios");
 const crypto = require("crypto");
+const { request } = require("http");
 const users = [];
 let currentUser;
 
@@ -8,18 +9,22 @@ const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
 
-const validation = (string) => {
+const validation = (string, dataToCheck) => {
   if (hasWhiteSpaces(string)) {
     return {
       errorMessage: "has white spaces",
     };
-  } else if (string.length >= 16 || string.length < 3) {
+  } else if (string.length >= 22 || string.length < 5) {
     return {
       errorMessage: "username length must be between 3 and 16 characters",
     };
   } else if (!isNaN(string)) {
     return {
       errorMessage: "username cannot be a number",
+    };
+  } else if (users.some((el) => el.username == string)) {
+    return {
+      errorMessage: "username taken",
     };
   } else {
     return true;
@@ -55,34 +60,27 @@ module.exports = function (app) {
     const img = await checkUrl(request.body.imageUrl).then((result) => {
       return result;
     });
-    if (validation(request.body.username) == true) {
-      const found = users.some((el) => el.username == request.body.username);
-      if (!found) {
-        if (isImage(request.body.imageUrl) && img) {
-          const browserDetails = userAgent.parse(request.get("User-Agent"));
-          const browser = browserDetails.full.split("/");
-          const newUser = {
-            uuid: crypto.randomUUID(),
-            username: request.body.username,
-            dataTime: new Date().toString(),
-            image: request.body.imageUrl,
-            browser: {
-              browserName: browser[0],
-              browserVersion: browser[1],
-              osVersion: browserDetails.os,
-            },
-          };
-          users.push(newUser);
-          response.status(201);
-          response.send(users);
-          currentUser = newUser;
-        } else {
-          response.status(400);
-          response.send({ errorMessage: "invalid image url" });
-        }
+    if (validation(request.body.username, users) == true) {
+      if (isImage(request.body.imageUrl) && img) {
+        const browserDetails = userAgent.parse(request.get("User-Agent"));
+        const browser = browserDetails.full.split("/");
+        const newUser = {
+          uuid: crypto.randomUUID(),
+          username: request.body.username,
+          dataTime: new Date().toString(),
+          image: request.body.imageUrl,
+          browser: {
+            browserName: browser[0],
+            browserVersion: browser[1],
+            osVersion: browserDetails.os,
+          },
+        };
+        users.push(newUser);
+        response.status(201);
+        response.send(users);
+        currentUser = newUser;
       } else {
-        response.status(400);
-        response.send({ errorMessage: "username taken" });
+        response.status(401).json({ errorMessage: "invalid image url" });
       }
     } else {
       response.status(400);
