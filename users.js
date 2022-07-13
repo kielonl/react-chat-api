@@ -2,6 +2,7 @@ const userAgent = require("user-agent-parse");
 const axios = require("axios");
 const crypto = require("crypto");
 const users = [];
+let currentUser;
 
 const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
@@ -74,6 +75,7 @@ module.exports = function (app) {
           users.push(newUser);
           response.status(201);
           response.send(users);
+          currentUser = newUser;
         } else {
           response.status(400);
           response.send({ errorMessage: "invalid image url" });
@@ -101,3 +103,5 @@ module.exports = function (app) {
     }
   });
 };
+
+module.exports.users = users;
