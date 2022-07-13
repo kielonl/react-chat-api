@@ -5,7 +5,7 @@ const roomName = document.getElementById(`room-name`);
 const userList = document.getElementById(`users`);
 
 //nazwa uzytkownika i pokoju z url
-const { username, room } = Qs.parse(location.search, {
+const { username, room, ulrid } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
 
@@ -39,7 +39,7 @@ chatForm.addEventListener(`submit`, (e) => {
 function outputMessage(wiadomosc) {
   const div = document.createElement(`div`);
   div.classList.add(`wiadomosc`);
-  div.innerHTML = `<p class="meta">${wiadomosc.username}<span>${wiadomosc.time}</span></p>
+  div.innerHTML = `<p class="meta"><img src=${ulrid} class="small">${wiadomosc.username}<span>${wiadomosc.time}</span></p>
 						<p class="text">
 							${wiadomosc.text}
 						</p>`;

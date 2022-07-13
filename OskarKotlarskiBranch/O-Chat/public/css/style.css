@@ -33,7 +33,7 @@ a {
 	cursor: pointer;
 	padding: 5px 15px;
 	background: var(--light-color);
-	color: var(--dark-color-a);
+	color: rgb(255, 255, 255);
 	border: 0;
 	font-size: 17px;
 }
@@ -108,7 +108,7 @@ a {
 }
 
 .chat-messages .wiadomosc .meta span {
-	color: #777;
+	color: rgb(255, 255, 255);
 }
 
 .chat-form-container {
@@ -121,6 +121,13 @@ a {
 }
 
 .chat-form-container input[type='text'] {
+	font-size: 16px;
+	padding: 5px;
+	height: 40px;
+	flex: 1;
+}
+
+.chat-form-container input[type='url'] {
 	font-size: 16px;
 	padding: 5px;
 	height: 40px;
@@ -187,4 +194,9 @@ a {
 	.chat-sidebar {
 		display: none;
 	}
+}
+
+.small{
+width: 20px;
+height: 20px;
 }
