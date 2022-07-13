@@ -1,7 +1,6 @@
 const userAgent = require("user-agent-parse");
 const axios = require("axios");
 const crypto = require("crypto");
-const { request } = require("http");
 const users = [];
 let currentUser;
 
@@ -9,7 +8,7 @@ const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
 
-const validation = (string, dataToCheck) => {
+const validation = (string) => {
   if (hasWhiteSpaces(string)) {
     return {
       errorMessage: "has white spaces",
@@ -94,10 +93,10 @@ module.exports = function (app) {
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
     if (result) {
-      response.status(201);
+      response.status(200);
       response.json(result);
     } else {
-      response.status(401).json({ errorMessage: "User UUID not found" });
+      response.status(400).json({ errorMessage: "User UUID not found" });
     }
   });
 };
