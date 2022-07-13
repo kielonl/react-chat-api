@@ -2,15 +2,15 @@ const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
 
-const usernameExists = (string) => {
-  return users.some((el) => el.uuid == string);
+const usernameExists = (givenUuid) => {
+  return users.some((el) => el.uuid == givenUuid);
 };
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
     if (!usernameExists(request.body.uuid)) {
       return response
-        .status(401)
+        .status(400)
         .json({ errorMessage: "There's no user with this UUID" });
     }
     if (
@@ -18,7 +18,7 @@ module.exports = function (app) {
       request.body.maxUsers < 2 ||
       !Number.isInteger(request.body.maxUsers)
     ) {
-      response.status(401).json({
+      response.status(400).json({
         errorMessage: "Users amount must be a number between 2 and 128",
       });
     }
@@ -34,5 +34,13 @@ module.exports = function (app) {
   });
   app.get("/users", (request, response) => {
     response.send(channels);
+  });
+  app.get("/channels/:uuid", (request, response) => {
+    const result = channels.find((x) => x.channelUuid == request.params.uuid);
+    if (result) {
+      response.status(200).json(result);
+    } else {
+      response.status(400).json({ errorMessage: "Channel UUID not found" });
+    }
   });
 };

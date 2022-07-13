@@ -7,18 +7,18 @@ const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
 const isLenghtOk = (string) => {
-  return string.length >= 16 || string.length < 3;
+  return string.length >= 22 || string.length < 5;
 };
 const isNotANumber = (string) => {
   return !isNaN(string);
 };
-function isImage(url) {
+const isImage = (url) => {
   if (url.length < 2048) {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
   } else {
     return false;
   }
-}
+};
 const isUsernameTaken = (string) => {
   return users.some((el) => el.username == string);
 };
@@ -92,10 +92,10 @@ module.exports = function (app) {
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
     if (result) {
-      response.status(201);
+      response.status(200);
       response.json(result);
     } else {
-      response.status(401).json({ errorMessage: "User UUID not found" });
+      response.status(400).json({ errorMessage: "User UUID not found" });
     }
   });
 };
