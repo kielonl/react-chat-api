@@ -3,10 +3,10 @@ const axios = require("axios");
 const crypto = require("crypto");
 const users = [];
 
-const hasWhiteSpaces = (string) => {
-  return /\s/.test(string);
+const hasWhiteSpaces = (username) => {
+  return /\s/.test(username);
 };
-const isLenghtOk = (string) => {
+const isLengthOk = (string) => {
   return string.length >= 22 || string.length < 5;
 };
 const isNotANumber = (string) => {
@@ -14,7 +14,7 @@ const isNotANumber = (string) => {
 };
 const isImage = (url) => {
   if (url.length < 2048) {
-    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+    return /\.(jpg|jpeg|png)$/.test(url);
   } else {
     return false;
   }
@@ -41,14 +41,12 @@ const checkUrl = async (url) => {
 const getBrowserData = (req) => {
   const browserDetails = userAgent.parse(req.get("User-Agent"));
   const browser = browserDetails.full.split("/");
-
   return {
     browserName: browser[0],
     browserVersion: browser[1],
     osVersion: browserDetails.os,
   };
 };
-
 module.exports = function (app) {
   app.post("/users", async (request, response) => {
     const img = await checkUrl(request.body.imageUrl).then((result) => {
@@ -57,7 +55,7 @@ module.exports = function (app) {
     if (hasWhiteSpaces(request.body.username)) {
       return response.status(400).json({ errorMessage: "has white spaces" });
     }
-    if (isLenghtOk(request.body.username)) {
+    if (isLengthOk(request.body.username)) {
       return response.status(400).json({
         errorMessage: "username length must be between 3 and 16 characters",
       });
@@ -76,9 +74,9 @@ module.exports = function (app) {
 
     const newUser = {
       uuid: crypto.randomUUID(),
-      username: request.body.username,
+      username: request.body.username.trim(),
       dataTime: new Date().toString(),
-      image: request.body.imageUrl,
+      image: request.body.imageUrl.trim(),
       browser: getBrowserData(request),
     };
     users.push(newUser);
