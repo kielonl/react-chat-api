@@ -62,5 +62,9 @@ module.exports.getBrowserData = getBrowserData;
 const usernameExists = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.some((el) => el.uuid == givenUuid);
 };
+const isUsersInRange = (users) => {
+  return users > 2 && users < 128 && Number.isInteger(users);
+};
 
 module.exports.usernameExists = usernameExists;
+module.exports.isUsersInRange = isUsersInRange;

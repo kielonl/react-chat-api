@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
 const usernameExists = require("./helpers").usernameExists;
+const isUsersInRange = require("./helpers").isUsersInRange;
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
@@ -10,12 +11,8 @@ module.exports = function (app) {
         .status(400)
         .json({ errorMessage: "There's no user with this UUID" });
     }
-    if (
-      request.body.maxUsers > 128 ||
-      request.body.maxUsers < 2 ||
-      !Number.isInteger(request.body.maxUsers)
-    ) {
-      response.status(400).json({
+    if (!isUsersInRange(request.body.maxUsers)) {
+      return response.status(400).json({
         errorMessage: "Users amount must be a number between 2 and 128",
       });
     }
