@@ -7,7 +7,7 @@ const hasWhiteSpaces = (username) => {
   return /\s/.test(username);
 };
 const isLengthOk = (string) => {
-  return string.length >= 22 || string.length < 5;
+  return string.length >= 18 || string.length < 3;
 };
 const isNotANumber = (string) => {
   return !isNaN(string);
