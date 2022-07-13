@@ -1,5 +1,6 @@
 const userAgent = require("user-agent-parse");
 const axios = require("axios");
+const crypto = require("crypto");
 const users = [];
 let currentUser;
 
@@ -9,11 +10,17 @@ const hasWhiteSpaces = (string) => {
 
 const validation = (string) => {
   if (hasWhiteSpaces(string)) {
-    return "has white spaces";
+    return {
+      errorMessage: "has white spaces",
+    };
   } else if (string.length >= 16 || string.length < 3) {
-    return "username length must be between 3 and 16 characters";
+    return {
+      errorMessage: "username length must be between 3 and 16 characters",
+    };
   } else if (!isNaN(string)) {
-    return "username cannot be a number";
+    return {
+      errorMessage: "username cannot be a number",
+    };
   } else {
     return true;
   }
@@ -53,22 +60,29 @@ module.exports = function (app) {
       if (!found) {
         if (isImage(request.body.imageUrl) && img) {
           const browserDetails = userAgent.parse(request.get("User-Agent"));
+          const browser = browserDetails.full.split("/");
           const newUser = {
+            uuid: crypto.randomUUID(),
             username: request.body.username,
             dataTime: new Date().toString(),
-            browser: browserDetails,
             image: request.body.imageUrl,
+            browser: {
+              browserName: browser[0],
+              browserVersion: browser[1],
+              osVersion: browserDetails.os,
+            },
           };
           users.push(newUser);
+          response.status(201);
           response.send(users);
           currentUser = newUser;
         } else {
           response.status(400);
-          response.send("invalid image url");
+          response.send({ errorMessage: "invalid image url" });
         }
       } else {
         response.status(400);
-        response.send("username taken");
+        response.send({ errorMessage: "username taken" });
       }
     } else {
       response.status(400);
@@ -77,7 +91,16 @@ module.exports = function (app) {
   });
 
   app.get("/users", (request, response) => {
-    response.send(`<img src=${users[0].image} alt="dziadek"/>`);
+    response.send(users);
+  });
+  app.get("/users/:id", (request, response) => {
+    const result = users.find((x) => x.uuid == request.params.id);
+    if (result) {
+      response.status(201);
+      response.json(result);
+    } else {
+      response.status(401).json({ errorMessage: "User UUID not found" });
+    }
   });
 };
 
