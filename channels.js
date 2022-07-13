@@ -28,7 +28,7 @@ module.exports = function (app) {
       request.body.maxUsers < 2 ||
       !Number.isInteger(request.body.maxUsers)
     ) {
-      response.status(400).json({
+      return response.status(400).json({
         errorMessage: "Users amount must be a number between 2 and 128",
       });
     }
@@ -39,8 +39,7 @@ module.exports = function (app) {
       maxNumberOfMembers: request.body.maxUsers,
     };
     channels.push(channelOwner);
-    response.status(201);
-    response.send(channels);
+    response.status(201).json(channels);
   });
   app.get("/users", (request, response) => {
     response.send(channels);

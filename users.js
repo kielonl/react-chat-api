@@ -57,7 +57,7 @@ module.exports = function (app) {
     }
     if (isLengthOk(request.body.username)) {
       return response.status(400).json({
-        errorMessage: "username length must be between 3 and 16 characters",
+        errorMessage: "username length must be between 3 and 18 characters",
       });
     }
     if (isNotANumber(request.body.username)) {
@@ -89,6 +89,7 @@ module.exports = function (app) {
   });
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
+    //dodac funkcje do sprawdzania uuid kurwa ten
     if (result) {
       response.status(200);
       response.json(result);
