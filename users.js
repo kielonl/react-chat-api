@@ -59,12 +59,17 @@ module.exports = function (app) {
       if (!found) {
         if (isImage(request.body.imageUrl) && img) {
           const browserDetails = userAgent.parse(request.get("User-Agent"));
+          const browser = browserDetails.full.split("/");
           const newUser = {
             uuid: crypto.randomUUID(),
             username: request.body.username,
             dataTime: new Date().toString(),
-            browser: browserDetails,
             image: request.body.imageUrl,
+            browser: {
+              browserName: browser[0],
+              browserVersion: browser[1],
+              osVersion: browserDetails.os,
+            },
           };
           users.push(newUser);
           response.status(201);
