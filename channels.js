@@ -1,14 +1,11 @@
 const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
-
-const usernameExists = (givenUuid) => {
-  return users.some((el) => el.uuid == givenUuid);
-};
+const usernameExists = require("./helpers").usernameExists;
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
-    if (!usernameExists(request.body.uuid)) {
+    if (!usernameExists(users, request.body.uuid)) {
       return response
         .status(400)
         .json({ errorMessage: "There's no user with this UUID" });
