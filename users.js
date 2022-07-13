@@ -30,13 +30,13 @@ const validation = (string) => {
   }
 };
 
-function isImage(url) {
+const isImage = (url) => {
   if (url.length < 2048) {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
   } else {
     return false;
   }
-}
+};
 
 const checkUrl = async (url) => {
   const result = await axios

@@ -1,13 +1,12 @@
 const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
-function found(string) {
-  const result = users.some((el) => el.username == string);
-  return result;
-}
+const isUsernameTaken = (givenUsername) => {
+  return users.some((el) => el.username == givenUsername);
+};
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
-    if (!found(request.body.username)) {
+    if (!isUsernameTaken(request.body.username)) {
       response
         .status(400)
         .json({ errorMessage: "There's no user with this username" });
