@@ -2,22 +2,16 @@ const userAgent = require("user-agent-parse");
 const axios = require("axios");
 const crypto = require("crypto");
 const users = [];
-let currentUser;
 
 const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
 const isLenghtOk = (string) => {
-  if (string.length >= 16 || string.length < 3) {
-    return false;
-  } else {
-    return true;
-  }
+  return string.length >= 16 || string.length < 3;
 };
 const isNotANumber = (string) => {
   return !isNaN(string);
 };
-
 function isImage(url) {
   if (url.length < 2048) {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
@@ -25,6 +19,9 @@ function isImage(url) {
     return false;
   }
 }
+const isUsernameTaken = (string) => {
+  return users.some((el) => el.username == string);
+};
 
 const checkUrl = async (url) => {
   const result = await axios
@@ -41,6 +38,16 @@ const checkUrl = async (url) => {
     return true;
   }
 };
+const getBrowserData = (req) => {
+  const browserDetails = userAgent.parse(req.get("User-Agent"));
+  const browser = browserDetails.full.split("/");
+
+  return {
+    browserName: browser[0],
+    browserVersion: browser[1],
+    osVersion: browserDetails.os,
+  };
+};
 
 module.exports = function (app) {
   app.post("/users", async (request, response) => {
@@ -50,7 +57,7 @@ module.exports = function (app) {
     if (hasWhiteSpaces(request.body.username)) {
       return response.status(400).json({ errorMessage: "has white spaces" });
     }
-    if (!isLenghtOk(request.body.username)) {
+    if (isLenghtOk(request.body.username)) {
       return response.status(400).json({
         errorMessage: "username length must be between 3 and 16 characters",
       });
@@ -60,30 +67,23 @@ module.exports = function (app) {
         .status(400)
         .json({ errorMessage: "username can't be an integer" });
     }
-    const found = users.some((el) => el.username == request.body.username);
-    if (found) {
+    if (isUsernameTaken(request.body.username)) {
       return response.status(400).json({ errorMessage: "username taken" });
     }
     if (!isImage(request.body.imageUrl) || !img) {
       return response.status(401).json({ errorMessage: "invalid image url" });
     }
-    const browserDetails = userAgent.parse(request.get("User-Agent"));
-    const browser = browserDetails.full.split("/");
+
     const newUser = {
       uuid: crypto.randomUUID(),
       username: request.body.username,
       dataTime: new Date().toString(),
       image: request.body.imageUrl,
-      browser: {
-        browserName: browser[0],
-        browserVersion: browser[1],
-        osVersion: browserDetails.os,
-      },
+      browser: getBrowserData(request),
     };
     users.push(newUser);
     response.status(201);
     response.send(users);
-    currentUser = newUser;
   });
 
   app.get("/users", (request, response) => {
