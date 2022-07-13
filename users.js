@@ -13,7 +13,7 @@ const validation = (string) => {
     return {
       errorMessage: "has white spaces",
     };
-  } else if (string.length >= 16 || string.length < 3) {
+  } else if (string.length >= 22 || string.length < 5) {
     return {
       errorMessage: "username length must be between 3 and 16 characters",
     };
@@ -21,18 +21,22 @@ const validation = (string) => {
     return {
       errorMessage: "username cannot be a number",
     };
+  } else if (users.some((el) => el.username == string)) {
+    return {
+      errorMessage: "username taken",
+    };
   } else {
     return true;
   }
 };
 
-function isImage(url) {
+const isImage = (url) => {
   if (url.length < 2048) {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
   } else {
     return false;
   }
-}
+};
 
 const checkUrl = async (url) => {
   const result = await axios
@@ -55,34 +59,27 @@ module.exports = function (app) {
     const img = await checkUrl(request.body.imageUrl).then((result) => {
       return result;
     });
-    if (validation(request.body.username) == true) {
-      const found = users.some((el) => el.username == request.body.username);
-      if (!found) {
-        if (isImage(request.body.imageUrl) && img) {
-          const browserDetails = userAgent.parse(request.get("User-Agent"));
-          const browser = browserDetails.full.split("/");
-          const newUser = {
-            uuid: crypto.randomUUID(),
-            username: request.body.username,
-            dataTime: new Date().toString(),
-            image: request.body.imageUrl,
-            browser: {
-              browserName: browser[0],
-              browserVersion: browser[1],
-              osVersion: browserDetails.os,
-            },
-          };
-          users.push(newUser);
-          response.status(201);
-          response.send(users);
-          currentUser = newUser;
-        } else {
-          response.status(400);
-          response.send({ errorMessage: "invalid image url" });
-        }
+    if (validation(request.body.username, users) == true) {
+      if (isImage(request.body.imageUrl) && img) {
+        const browserDetails = userAgent.parse(request.get("User-Agent"));
+        const browser = browserDetails.full.split("/");
+        const newUser = {
+          uuid: crypto.randomUUID(),
+          username: request.body.username,
+          dataTime: new Date().toString(),
+          image: request.body.imageUrl,
+          browser: {
+            browserName: browser[0],
+            browserVersion: browser[1],
+            osVersion: browserDetails.os,
+          },
+        };
+        users.push(newUser);
+        response.status(201);
+        response.send(users);
+        currentUser = newUser;
       } else {
-        response.status(400);
-        response.send({ errorMessage: "username taken" });
+        response.status(401).json({ errorMessage: "invalid image url" });
       }
     } else {
       response.status(400);
@@ -96,10 +93,10 @@ module.exports = function (app) {
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
     if (result) {
-      response.status(201);
+      response.status(200);
       response.json(result);
     } else {
-      response.status(401).json({ errorMessage: "User UUID not found" });
+      response.status(400).json({ errorMessage: "User UUID not found" });
     }
   });
 };
