@@ -1,52 +1,17 @@
-const userAgent = require("user-agent-parse");
-const axios = require("axios");
 const crypto = require("crypto");
 const users = [];
+const {
+  hasWhiteSpaces,
+  isLengthOk,
+  isNotANumber,
+  isImage,
+  isUsernameTaken,
+  checkUrl,
+  getBrowserData,
+  usernameExists,
+  uuidExists,
+} = require("./helpers");
 
-const hasWhiteSpaces = (username) => {
-  return /\s/.test(username);
-};
-const isLengthOk = (string) => {
-  return string.length >= 18 || string.length < 3;
-};
-const isNotANumber = (string) => {
-  return !isNaN(string);
-};
-const isImage = (url) => {
-  if (url.length < 2048) {
-    return /\.(jpg|jpeg|png)$/.test(url);
-  } else {
-    return false;
-  }
-};
-const isUsernameTaken = (string) => {
-  return users.some((el) => el.username == string);
-};
-
-const checkUrl = async (url) => {
-  const result = await axios
-    .get(url)
-    .then((response) => {
-      return response.status;
-    })
-    .catch((error) => {
-      return error.status;
-    });
-  if (result != 200) {
-    return false;
-  } else {
-    return true;
-  }
-};
-const getBrowserData = (req) => {
-  const browserDetails = userAgent.parse(req.get("User-Agent"));
-  const browser = browserDetails.full.split("/");
-  return {
-    browserName: browser[0],
-    browserVersion: browser[1],
-    osVersion: browserDetails.os,
-  };
-};
 module.exports = function (app) {
   app.post("/users", async (request, response) => {
     const img = await checkUrl(request.body.imageUrl).then((result) => {
@@ -65,7 +30,7 @@ module.exports = function (app) {
         .status(400)
         .json({ errorMessage: "username can't be an integer" });
     }
-    if (isUsernameTaken(request.body.username)) {
+    if (isUsernameTaken(users, request.body.username)) {
       return response.status(400).json({ errorMessage: "username taken" });
     }
     if (!isImage(request.body.imageUrl) || !img) {
@@ -89,13 +54,11 @@ module.exports = function (app) {
   });
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
-    //dodac funkcje do sprawdzania uuid kurwa ten
-    if (result) {
-      response.status(200);
-      response.json(result);
-    } else {
-      response.status(400).json({ errorMessage: "User UUID not found" });
+
+    if (!usernameExists(users, request.params.id)) {
+      return response.status(400).json({ errorMessage: "User UUID not found" });
     }
+    response.status(200).json(uuidExists(users, request.params.id));
   });
 };
 

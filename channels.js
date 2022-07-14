@@ -1,33 +1,19 @@
 const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
-
-const isValidUUID = (uuid) => {
-  const regexExp =
-    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-  return regexExp.test(uuid);
-};
-
-const usernameExists = (givenUuid) => {
-  return users.some((el) => el.uuid == givenUuid);
-};
+const { usernameExists, isUsersInRange, isValidUUID } = require("./helpers");
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
     if (!isValidUUID(request.body.uuid)) {
       return response.status(400).json({ errorMessage: "UUID is invalid" });
-    } else {
-      if (!usernameExists(request.body.uuid)) {
-        return response
-          .status(400)
-          .json({ errorMessage: "There's no user with this UUID" });
-      }
     }
-    if (
-      request.body.maxUsers > 128 ||
-      request.body.maxUsers < 2 ||
-      !Number.isInteger(request.body.maxUsers)
-    ) {
+    if (!usernameExists(users, request.body.uuid)) {
+      return response
+        .status(400)
+        .json({ errorMessage: "There's no user with this UUID" });
+    }
+    if (!isUsersInRange(request.body.maxUsers)) {
       return response.status(400).json({
         errorMessage: "Users amount must be a number between 2 and 128",
       });
