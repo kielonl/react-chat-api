@@ -5,15 +5,15 @@ const axios = require("axios");
 const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
-const isLenghtOk = (string) => {
-  return string.length >= 22 || string.length < 5;
+const isLengthOk = (string) => {
+  return string.length >= 18 || string.length < 3;
 };
 const isNotANumber = (value) => {
   return !isNaN(value);
 };
 const isImage = (url) => {
   if (url.length < 2048) {
-    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+    return /\.(jpg|jpeg|png)$/.test(url);
   } else {
     return false;
   }
@@ -46,7 +46,7 @@ const getBrowserData = (req) => {
 };
 
 module.exports.hasWhiteSpaces = hasWhiteSpaces;
-module.exports.isLenghtOk = isLenghtOk;
+module.exports.isLengthOk = isLengthOk;
 module.exports.isNotANumber = isNotANumber;
 module.exports.isImage = isImage;
 module.exports.isUsernameTaken = isUsernameTaken;
@@ -58,9 +58,19 @@ module.exports.getBrowserData = getBrowserData;
 const usernameExists = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.some((el) => el.uuid == givenUuid);
 };
+const uuidExists = (arrayOfUsers, givenUuid) => {
+  return arrayOfUsers.find((x) => x.uuid == givenUuid);
+};
 const isUsersInRange = (users) => {
   return users > 2 && users < 128 && Number.isInteger(users);
 };
+const isValidUUID = (uuid) => {
+  const regexExp =
+    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+  return regexExp.test(uuid);
+};
 
+module.exports.uuidExists = uuidExists;
+module.exports.isValidUUID = isValidUUID;
 module.exports.usernameExists = usernameExists;
 module.exports.isUsersInRange = isUsersInRange;

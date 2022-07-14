@@ -2,12 +2,14 @@ const crypto = require("crypto");
 const users = [];
 const {
   hasWhiteSpaces,
-  isLenghtOk,
+  isLengthOk,
   isNotANumber,
   isImage,
   isUsernameTaken,
   checkUrl,
   getBrowserData,
+  usernameExists,
+  uuidExists,
 } = require("./helpers");
 
 module.exports = function (app) {
@@ -18,9 +20,9 @@ module.exports = function (app) {
     if (hasWhiteSpaces(request.body.username)) {
       return response.status(400).json({ errorMessage: "has white spaces" });
     }
-    if (isLenghtOk(request.body.username)) {
+    if (isLengthOk(request.body.username)) {
       return response.status(400).json({
-        errorMessage: "username length must be between 3 and 16 characters",
+        errorMessage: "username length must be between 3 and 18 characters",
       });
     }
     if (isNotANumber(request.body.username)) {
@@ -37,9 +39,9 @@ module.exports = function (app) {
 
     const newUser = {
       uuid: crypto.randomUUID(),
-      username: request.body.username,
+      username: request.body.username.trim(),
       dataTime: new Date().toString(),
-      image: request.body.imageUrl,
+      image: request.body.imageUrl.trim(),
       browser: getBrowserData(request),
     };
     users.push(newUser);
@@ -52,12 +54,11 @@ module.exports = function (app) {
   });
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
-    if (result) {
-      response.status(200);
-      response.json(result);
-    } else {
-      response.status(400).json({ errorMessage: "User UUID not found" });
+
+    if (!usernameExists(users, request.params.id)) {
+      return response.status(400).json({ errorMessage: "User UUID not found" });
     }
+    response.status(200).json(uuidExists(users, request.params.id));
   });
 };
 

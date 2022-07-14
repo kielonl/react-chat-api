@@ -1,10 +1,13 @@
 const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
-const { usernameExists, isUsersInRange } = require("./helpers");
+const { usernameExists, isUsersInRange, isValidUUID } = require("./helpers");
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
+    if (!isValidUUID(request.body.uuid)) {
+      return response.status(400).json({ errorMessage: "UUID is invalid" });
+    }
     if (!usernameExists(users, request.body.uuid)) {
       return response
         .status(400)
@@ -22,18 +25,23 @@ module.exports = function (app) {
       maxNumberOfMembers: request.body.maxUsers,
     };
     channels.push(channelOwner);
-    response.status(201);
-    response.send(channels);
+    response.status(201).json(channels);
   });
   app.get("/users", (request, response) => {
     response.send(channels);
   });
   app.get("/channels/:uuid", (request, response) => {
-    const result = channels.find((x) => x.channelUuid == request.params.uuid);
-    if (result) {
-      response.status(200).json(result);
+    if (isValidUUID(request.params.uuid)) {
+      const result = channels.find((x) => x.channelUuid == request.params.uuid);
+      if (result) {
+        response.status(200).json(result);
+      } else {
+        response.status(400).json({ errorMessage: "Channel UUID not found" });
+      }
     } else {
-      response.status(400).json({ errorMessage: "Channel UUID not found" });
+      response
+        .status(400)
+        .json({ errorMessage: "given UUID format is invalid" });
     }
   });
 };
