@@ -1,12 +1,14 @@
 const crypto = require("crypto");
 const users = [];
-const hasWhiteSpaces = require("./helpers").hasWhiteSpaces;
-const isLenghtOk = require("./helpers").isLenghtOk;
-const isNotANumber = require("./helpers").isNotANumber;
-const isImage = require("./helpers").isImage;
-const isUsernameTaken = require("./helpers").isUsernameTaken;
-const checkUrl = require("./helpers").checkUrl;
-const getBrowserData = require("./helpers").getBrowserData;
+const {
+  hasWhiteSpaces,
+  isLenghtOk,
+  isNotANumber,
+  isImage,
+  isUsernameTaken,
+  checkUrl,
+  getBrowserData,
+} = require("./helpers");
 
 module.exports = function (app) {
   app.post("/users", async (request, response) => {

@@ -1,8 +1,7 @@
 const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
-const usernameExists = require("./helpers").usernameExists;
-const isUsersInRange = require("./helpers").isUsersInRange;
+const { usernameExists, isUsersInRange } = require("./helpers");
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {

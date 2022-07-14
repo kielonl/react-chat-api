@@ -32,11 +32,7 @@ const checkUrl = async (url) => {
     .catch((error) => {
       return error.status;
     });
-  if (result != 200) {
-    return false;
-  } else {
-    return true;
-  }
+  return result == 200;
 };
 const getBrowserData = (req) => {
   const browserDetails = userAgent.parse(req.get("User-Agent"));
