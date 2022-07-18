@@ -54,7 +54,9 @@ module.exports.checkUrl = checkUrl;
 module.exports.getBrowserData = getBrowserData;
 
 //functions used in channels.js
-
+const channelCreated = (array, requstedUuid) => {
+  return array.some((el) => el.owner == requstedUuid);
+};
 const usernameExists = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.some((el) => el.uuid == givenUuid);
 };
@@ -71,6 +73,7 @@ const isValidUUID = (uuid) => {
 };
 
 module.exports.uuidExists = uuidExists;
+module.exports.channelCreated = channelCreated;
 module.exports.isValidUUID = isValidUUID;
 module.exports.usernameExists = usernameExists;
 module.exports.isUsersInRange = isUsersInRange;

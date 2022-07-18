@@ -1,7 +1,12 @@
 const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
-const { usernameExists, isUsersInRange, isValidUUID } = require("./helpers");
+const {
+  usernameExists,
+  isUsersInRange,
+  isValidUUID,
+  channelCreated,
+} = require("./helpers");
 
 module.exports = function (app) {
   app.post("/channels", (request, response) => {
@@ -16,6 +21,11 @@ module.exports = function (app) {
     if (!isUsersInRange(request.body.maxUsers)) {
       return response.status(400).json({
         errorMessage: "Users amount must be a number between 2 and 128",
+      });
+    }
+    if (channelCreated(channels, request.body.uuid)) {
+      return response.status(400).json({
+        errorMessage: "This user already has his own channel",
       });
     }
     const channelOwner = {
