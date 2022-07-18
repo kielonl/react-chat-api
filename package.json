@@ -1,0 +1,27 @@
+{
+  "name": "chat-backend",
+  "version": "1.0.0",
+  "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/el-praktykanto/chat-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/el-praktykanto/chat-backend/issues"
+  },
+  "homepage": "https://gitlab.com/el-praktykanto/chat-backend#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "user-agent-parse": "^0.1.12"
+  }
+}
