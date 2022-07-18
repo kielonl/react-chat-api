@@ -2,7 +2,9 @@ const crypto = require("crypto");
 const users = require("./users").users;
 let channels = [];
 const {
-  usernameExists,
+  isChannelNameLengthOk,
+  ChannelNameExists,
+  elementExists,
   isUsersInRange,
   isValidUUID,
   channelCreated,
@@ -13,7 +15,7 @@ module.exports = function (app) {
     if (!isValidUUID(request.body.uuid)) {
       return response.status(400).json({ errorMessage: "UUID is invalid" });
     }
-    if (!usernameExists(users, request.body.uuid)) {
+    if (!elementExists(users, request.body.uuid)) {
       return response
         .status(400)
         .json({ errorMessage: "There's no user with this UUID" });
@@ -28,7 +30,18 @@ module.exports = function (app) {
         errorMessage: "This user already has his own channel",
       });
     }
+    if (ChannelNameExists(channels, request.body.channelName)) {
+      return response.status(400).json({
+        errorMessage: "This channel name already exists",
+      });
+    }
+    if (isChannelNameLengthOk(request.body.channelName, 5, 30)) {
+      return response.status(400).json({
+        errorMessage: "Channel name length must be between 5 and 30 characters",
+      });
+    }
     const channelOwner = {
+      channelName: request.body.channelName,
       owner: request.body.uuid,
       channelUuid: crypto.randomUUID(),
       dataTime: new Date().toString(),
