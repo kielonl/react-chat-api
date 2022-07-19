@@ -5,8 +5,8 @@ const axios = require("axios");
 const hasWhiteSpaces = (string) => {
   return /\s/.test(string);
 };
-const isLengthOk = (string) => {
-  return string.length >= 18 || string.length < 3;
+const isLengthOk = (string, min, max) => {
+  return string.trim().length >= max || string.length < min;
 };
 const isNotANumber = (value) => {
   return !isNaN(value);
@@ -57,8 +57,8 @@ module.exports.getBrowserData = getBrowserData;
 const channelCreated = (array, requstedUuid) => {
   return array.some((el) => el.owner == requstedUuid);
 };
-const usernameExists = (arrayOfUsers, givenUuid) => {
-  return arrayOfUsers.some((el) => el.uuid == givenUuid);
+const elementExists = (arrayOfElements, givenElement) => {
+  return arrayOfElements.some((el) => el.uuid == givenElement);
 };
 const uuidExists = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.find((x) => x.uuid == givenUuid);
@@ -71,9 +71,16 @@ const isValidUUID = (uuid) => {
     /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
   return regexExp.test(uuid);
 };
-
+const isChannelNameLengthOk = (channelName, min, max) => {
+  return channelName.length >= max || channelName.length < min;
+};
+const ChannelNameExists = (arrayOfElements, channelName) => {
+  return arrayOfElements.some((el) => el.channelName == channelName);
+};
+module.exports.isChannelNameLengthOk = isChannelNameLengthOk;
+module.exports.ChannelNameExists = ChannelNameExists;
 module.exports.uuidExists = uuidExists;
 module.exports.channelCreated = channelCreated;
 module.exports.isValidUUID = isValidUUID;
-module.exports.usernameExists = usernameExists;
+module.exports.elementExists = elementExists;
 module.exports.isUsersInRange = isUsersInRange;

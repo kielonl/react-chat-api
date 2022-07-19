@@ -8,7 +8,7 @@ const {
   isUsernameTaken,
   checkUrl,
   getBrowserData,
-  usernameExists,
+  elementExists,
   uuidExists,
 } = require("./helpers");
 
@@ -20,7 +20,7 @@ module.exports = function (app) {
     if (hasWhiteSpaces(request.body.username)) {
       return response.status(400).json({ errorMessage: "has white spaces" });
     }
-    if (isLengthOk(request.body.username)) {
+    if (isLengthOk(request.body.username, 3, 18)) {
       return response.status(400).json({
         errorMessage: "username length must be between 3 and 18 characters",
       });
@@ -55,7 +55,7 @@ module.exports = function (app) {
   app.get("/users/:id", (request, response) => {
     const result = users.find((x) => x.uuid == request.params.id);
 
-    if (!usernameExists(users, request.params.id)) {
+    if (!elementExists(users, request.params.id)) {
       return response.status(400).json({ errorMessage: "User UUID not found" });
     }
     response.status(200).json(uuidExists(users, request.params.id));
