@@ -50,7 +50,7 @@ module.exports = function (app) {
     channels.push(channelOwner);
     response.status(201).json(channels);
   });
-  app.get("/users", (request, response) => {
+  app.get("/channels", (request, response) => {
     response.send(channels);
   });
   app.get("/channels/:uuid", (request, response) => {
