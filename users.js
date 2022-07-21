@@ -9,7 +9,7 @@ const {
   checkUrl,
   getBrowserData,
   elementExists,
-  uuidExists,
+  findUserByUUID,
 } = require("./helpers");
 
 module.exports = function (app) {
@@ -45,20 +45,17 @@ module.exports = function (app) {
       browser: getBrowserData(request),
     };
     users.push(newUser);
-    response.status(201);
-    response.send(newUser);
+    response.status(201).json(newUser);
   });
 
   app.get("/users", (request, response) => {
     response.send(users);
   });
   app.get("/users/:id", (request, response) => {
-    const result = users.find((x) => x.uuid == request.params.id);
-
     if (!elementExists(users, request.params.id)) {
       return response.status(400).json({ errorMessage: "User UUID not found" });
     }
-    response.status(200).json(uuidExists(users, request.params.id));
+    response.status(200).json(findUserByUUID(users, request.params.id));
   });
 };
 

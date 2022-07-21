@@ -60,7 +60,7 @@ const channelCreated = (array, requstedUuid) => {
 const elementExists = (arrayOfElements, givenElement) => {
   return arrayOfElements.some((el) => el.uuid == givenElement);
 };
-const uuidExists = (arrayOfUsers, givenUuid) => {
+const findUserByUUID = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.find((x) => x.uuid == givenUuid);
 };
 const isUsersInRange = (users) => {
@@ -79,7 +79,7 @@ const ChannelNameExists = (arrayOfElements, channelName) => {
 };
 module.exports.isChannelNameLengthOk = isChannelNameLengthOk;
 module.exports.ChannelNameExists = ChannelNameExists;
-module.exports.uuidExists = uuidExists;
+module.exports.findUserByUUID = findUserByUUID;
 module.exports.channelCreated = channelCreated;
 module.exports.isValidUUID = isValidUUID;
 module.exports.elementExists = elementExists;
