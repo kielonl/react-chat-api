@@ -64,7 +64,7 @@ const findUserByUUID = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.find((x) => x.uuid == givenUuid);
 };
 const isUsersInRange = (users) => {
-  return users > 2 && users < 128 && Number.isInteger(users);
+  return users > 2 && users < 128;
 };
 const isValidUUID = (uuid) => {
   const regexExp =
