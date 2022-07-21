@@ -46,7 +46,7 @@ module.exports = function (app) {
     };
     users.push(newUser);
     response.status(201);
-    response.send(users);
+    response.send(newUser);
   });
 
   app.get("/users", (request, response) => {
