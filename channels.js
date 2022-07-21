@@ -48,7 +48,7 @@ module.exports = function (app) {
       maxNumberOfMembers: request.body.maxUsers,
     };
     channels.push(channelOwner);
-    response.status(201).json(channels);
+    response.status(201).json(channelOwner);
   });
   app.get("/channels", (request, response) => {
     response.send(channels);
