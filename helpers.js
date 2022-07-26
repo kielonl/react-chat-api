@@ -11,13 +11,6 @@ const isLengthOk = (string, min, max) => {
 const isNotANumber = (value) => {
   return !isNaN(value);
 };
-const isImage = (url) => {
-  if (url.length < 2048) {
-    return /\.(jpg|jpeg|png)$/.test(url);
-  } else {
-    return false;
-  }
-};
 
 const isUsernameTaken = (arr, username) => {
   return arr.some((el) => el.username == username);
@@ -48,7 +41,6 @@ const getBrowserData = (req) => {
 module.exports.hasWhiteSpaces = hasWhiteSpaces;
 module.exports.isLengthOk = isLengthOk;
 module.exports.isNotANumber = isNotANumber;
-module.exports.isImage = isImage;
 module.exports.isUsernameTaken = isUsernameTaken;
 module.exports.checkUrl = checkUrl;
 module.exports.getBrowserData = getBrowserData;

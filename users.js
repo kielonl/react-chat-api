@@ -4,7 +4,6 @@ const {
   hasWhiteSpaces,
   isLengthOk,
   isNotANumber,
-  isImage,
   isUsernameTaken,
   checkUrl,
   getBrowserData,
@@ -33,7 +32,7 @@ module.exports = function (app) {
     if (isUsernameTaken(users, request.body.username)) {
       return response.status(400).json({ errorMessage: "username taken" });
     }
-    if (!isImage(request.body.imageUrl) || !img) {
+    if (!img) {
       return response.status(401).json({ errorMessage: "invalid image url" });
     }
 
