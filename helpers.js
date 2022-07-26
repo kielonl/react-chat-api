@@ -38,6 +38,12 @@ const getBrowserData = (req) => {
   };
 };
 
+const isB64AnImage = (b64) => {
+  const base64regex =
+    /^\s*data:([a-z]+\/[a-z0-9\-]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
+  return base64regex.test(b64);
+};
+module.exports.isB64AnImage = isB64AnImage;
 module.exports.hasWhiteSpaces = hasWhiteSpaces;
 module.exports.isLengthOk = isLengthOk;
 module.exports.isNotANumber = isNotANumber;

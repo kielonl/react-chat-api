@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const users = [];
 const {
+  isB64AnImage,
   hasWhiteSpaces,
   isLengthOk,
   isNotANumber,
@@ -32,7 +33,8 @@ module.exports = function (app) {
     if (isUsernameTaken(users, request.body.username)) {
       return response.status(400).json({ errorMessage: "username taken" });
     }
-    if (!img) {
+    if (!img && !isB64AnImage(request.body.imageUrl)) {
+      console.log(request.body.imageUrl);
       return response.status(401).json({ errorMessage: "invalid image url" });
     }
 
