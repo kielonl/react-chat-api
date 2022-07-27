@@ -1,7 +1,6 @@
 const crypto = require("crypto");
 const users = [];
 const {
-  userExists,
   isB64AnImage,
   hasWhiteSpaces,
   isLengthOk,
@@ -59,8 +58,8 @@ module.exports = function (app) {
     }
     response.status(200).json(findUserByUUID(users, request.params.id));
   });
-  app.post("/users/auth/:username", (request, response) => {
-    if (!userExists(users, request.params.username)) {
+  app.post("/users/auth/:uuid", (request, response) => {
+    if (!findUserByUUID(users, request.params.uuid)) {
       return response.status(400).send(false);
     }
     response.status(200).send(true);
