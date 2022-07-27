@@ -58,12 +58,6 @@ module.exports = function (app) {
     }
     response.status(200).json(findUserByUUID(users, request.params.id));
   });
-  app.get("/users/auth/:uuid", (request, response) => {
-    if (!findUserByUUID(users, request.params.uuid)) {
-      return response.status(400).send(false);
-    }
-    response.status(200).send(true);
-  });
 };
 
 module.exports.users = users;
