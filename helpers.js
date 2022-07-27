@@ -61,6 +61,9 @@ const elementExists = (arrayOfElements, givenElement) => {
 const findUserByUUID = (arrayOfUsers, givenUuid) => {
   return arrayOfUsers.find((x) => x.uuid == givenUuid);
 };
+const userExists = (array, nick) => {
+  return array.find((x) => x.username == nick);
+};
 const isUsersInRange = (users) => {
   return users > 2 && users < 128;
 };
@@ -75,6 +78,7 @@ const isChannelNameLengthOk = (channelName, min, max) => {
 const ChannelNameExists = (arrayOfElements, channelName) => {
   return arrayOfElements.some((el) => el.channelName == channelName);
 };
+module.exports.userExists = userExists;
 module.exports.isChannelNameLengthOk = isChannelNameLengthOk;
 module.exports.ChannelNameExists = ChannelNameExists;
 module.exports.findUserByUUID = findUserByUUID;

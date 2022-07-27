@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const users = [];
 const {
+  userExists,
   isB64AnImage,
   hasWhiteSpaces,
   isLengthOk,
@@ -57,6 +58,12 @@ module.exports = function (app) {
       return response.status(400).json({ errorMessage: "User UUID not found" });
     }
     response.status(200).json(findUserByUUID(users, request.params.id));
+  });
+  app.post("/users/auth/:username", (request, response) => {
+    if (!userExists(users, request.params.username)) {
+      return response.status(400).send(false);
+    }
+    response.status(200).send(true);
   });
 };
 
