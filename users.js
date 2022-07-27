@@ -54,11 +54,11 @@ module.exports = function (app) {
   });
   app.get("/users/:id", (request, response) => {
     if (!elementExists(users, request.params.id)) {
-      return response.status(400).json({ errorMessage: "User UUID not found" });
+      return response.status(404).json({ errorMessage: "User UUID not found" });
     }
     response.status(200).json(findUserByUUID(users, request.params.id));
   });
-  app.post("/users/auth/:uuid", (request, response) => {
+  app.get("/users/auth/:uuid", (request, response) => {
     if (!findUserByUUID(users, request.params.uuid)) {
       return response.status(400).send(false);
     }
